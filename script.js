@@ -1,48 +1,85 @@
-const menu = [
-    {
-        nombre: 'Arroz',
-        ingredientes: 'Arroz, porotos negros y bife',
-        precio: 8,
-    },
-    {
-        nombre: 'Lasaña',
-        ingredientes: 'lasaña, carne, boloñesa, queso',
-        precio: 10,
-    },
-    {
-        nombre: 'Pollo asado con papas fritas',
-        ingredientes: 'pollo asado, papas fritas',
-        precio: 7,
-    },
-    {
-        nombre: 'Carbonara',
-        ingredientes: 'Pasta, carbonara',
-        precio: 5,
-    },
-];
- 
+document.addEventListener('DOMContentLoaded', function(){
+    const botonMenu = document.getElementById('boton-menu');
+    const menuDesplegable = document.getElementById('menu-desplegable');
 
-// Para buscar platillo aplico una funcion
-function buscarPlatillo(nombrePlatillo, presupuesto) {
-    const platillosEncontrados = menu.filter(platillo => platillo.nombre.toLowerCase() === nombrePlatillo.toLowerCase() && platillo.precio <= presupuesto);
+    botonMenu.addEventListener('click', function(){
+        if (menuDesplegable.classList.contains('show')){
+            menuDesplegable.classList.remove('show');
+        } else {
+            menuDesplegable.classList.add('show');
+        }
+    });
+
+    const contenedorItemsCarrito = document.getElementById('contenedor-items-carrito');
+    const subtotalCarrito = document.getElementById('subtotal-carrito');
+
+    // función para mostrar el carrito en pantalla
+    function mostrarCarrito() {
+        // limpiar contenido de carrito
+        contenedorItemsCarrito.innerHTML = '';
+
+        // obtener el carrito del almacenamiento local
+        const carrito = JSON.parse(localStorage.getItem('carrito'));
+
+        // mostrar cada elemento del carrito
+        carrito.forEach(function(item){
+            const elementoCarrito = document.createElement ('li');
+            elementoCarrito.textContent = `${item.nombre} - €${item.precio}}`;
+            contenedorItemsCarrito.appendChild(elementoCarrito);
+        });
+
+        // calcular y mostrar el subtotal del carrito
+        const subtotal = carrito.reduce((acc, item) => acc + item.precio, 0);
+        subtotalCarrito.textContent = `Subtotal: €${subtotal.toFixed(2)}`;     
+    }  
     
-    return platillosEncontrados [0];
-}
+    // mostrar el carrito al cargar la página
+    mostrarCarrito();
 
-// solicitar platillo al cliente
-const nombrePlatilloCliente = prompt("Ingrese el nombre del platillo que desea buscar:");
+    const contenedorMenu = document.getElementById('contenedor-menu');
 
-// solictar presu al cliente
-const presupuestoCliente = parseFloat(prompt("Ingrese su presupuesto:"));
+    function mostrarMenu() {
+        // limpiar contenido del menú
+        contenedorMenu.innerHTML = '';
 
-// busqueda del platillo
-const platilloBuscado = buscarPlatillo(nombrePlatilloCliente, presupuestoCliente);
+        // mostrar cada producto en el menú
+        menu.forEach(function(producto){
+            const elementoProducto = document.createElement('div');
+            elementoProducto.classList.add('cold-md-4');
+            elementoProducto.innerHTML = `
+                <div class="producto">
+                <h2 class="nombre-producto">${producto.nombre}</h2>
+                <p class="ingredientes-producto">${producto.ingredientes}</p>
+                <p class="precio-producto">€${producto.precio}</p>
+                <button class="boton-agregar-carrito" data-id-producto="${producto.id}">Agregar al Carrito</button>    
+                </div>
+            `;
+            contenedorMenu.appendChild(elementoProducto);
+        });
+    }
 
-// salida del resultado
-if (platilloBuscado) {
-    alert("¡Encontramos el platillo dentro de su presupuesto!\nNombre: " + platilloBuscado.nombre + "\nPrecio: €" + platilloBuscado.precio);
-} else {
-    alert("Lo sentimos, no encontramos el platillo dentro de su presupuesto o no está en el menú.");
-}
+    // mostrar el menú al cargar la página
+    mostrarMenu();
+
+    // manejar clic en botones "Agregar al carrito"
+    contenedorMenu.addEventListener('click', function(evento) {
+        if (evento.target.classList.contains('boton-agregar-carrito')) {
+            const idProducto = evento.target.getAttribute('data-id-producto');
+            const producto = menu.find(p => p.id == idProducto);
+
+            // Obtener el carrito de compras del almacenamiento local
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+            // Agregar el producto al carrito de compras
+            carrito.push(producto);
+
+            // Guardar el carrito actualizado en el almacenamiento local
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+
+            // Mostrar el carrito actualizado en pantalla
+            mostrarCarrito();
+        }
+    });
+});
 
 

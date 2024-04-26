@@ -1,0 +1,29 @@
+
+header {
+    background-color: #D90429;
+    height: 150px;
+    color: #EDF2F4;
+    font-family: Arial, Helvetica, sans-serif;
+    text-shadow: #2B2D42;
+    text-align: center;
+    padding: 25px;
+} 
+header a {
+    outline: none;
+}
+.resto{
+    font-size: 3rem;
+    color: hsl(34, 96%, 43%);
+    text-shadow: #2B2D42;
+    text-align: center;
+    outline: none;
+}
+.cook {
+    width: 300px;
+    height: 100px;
+}
+
+/* body {
+    background-image: https://images.app.goo.gl/983XZkTBEBiUJ4mK6;
+    
+}  */
